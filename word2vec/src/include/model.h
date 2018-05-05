@@ -70,6 +70,10 @@ constexpr int64_t SIGMOID_TABLE_SIZE = 512;
 constexpr int64_t MAX_SIGMOID = 8;
 constexpr int64_t LOG_TABLE_SIZE = 512;
 
+//constexpr int64_t SIGMOID_TABLE_SIZE = 1000;
+//constexpr int64_t MAX_SIGMOID = 6;
+//constexpr int64_t LOG_TABLE_SIZE = 512;
+
 Model::Model(std::shared_ptr<Matrix> wi, std::shared_ptr<Matrix> wo, 
 	std::shared_ptr<Args> args, int32_t seed):hidden_(args->dim), 
 	output_(wo->size(0)), grad_(args->dim), rng(seed) {

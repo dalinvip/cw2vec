@@ -90,8 +90,8 @@ void FastText::train(const Args args) {
 		infeature.close();
 	}
 
-	//input_ = std::make_shared<Matrix>(dict_->nwords() + dict_->nfeatures(), args_->dim);
-	input_ = std::make_shared<Matrix>(dict_->nwords() + args_->bucket, args_->dim);
+	input_ = std::make_shared<Matrix>(dict_->nwords() + dict_->nfeatures(), args_->dim);
+	//input_ = std::make_shared<Matrix>(dict_->nwords() + args_->bucket, args_->dim);
 	input_->uniform(1.0 / args_->dim);
 
 	output_ = std::make_shared<Matrix>(dict_->nwords(), args_->dim);
@@ -132,7 +132,6 @@ void FastText::skipgram(Model& model, real lr, const std::vector<std::vector<int
 	for (int32_t w = 0; w < target.size(); w++) {
 		int32_t boundary = uniform(model.rng);
 		const std::vector<int32_t>& ngrams = source[w];
-		//std::cout << ngrams[0] << std::endl;
 		assert(ngrams.size() == 1);
 		for (int32_t c = -boundary; c <= boundary; c++) {
 			if (c != 0 && w + c >= 0 && w + c < target.size()) {
@@ -152,7 +151,6 @@ void FastText::cbow(Model& model, real lr, const std::vector<std::vector<int32_t
 		for (int32_t c = -boundary; c <= boundary; c++) {
 			if (c != 0 && w + c >= 0 && w + c < target.size()) {
 				const std::vector<int32_t>& ngrams = source[w + c];
-				//const int32_t& ngrams = target[w + c];
 				bow.insert(bow.end(), ngrams.begin(), ngrams.cend());
 			}
 		}
@@ -181,27 +179,10 @@ void FastText::substoke(Model& model, real lr, const std::vector<std::vector<int
 		for (int32_t c = -boundary; c <= boundary; c++) {
 			if (c != 0 && w + c >= 0 && w + c < target.size()) {
 				model.update(ngrams, target[w + c], lr);
-				//model.updatePara(ngrams, target[w + c], lr);
 			}
 		}
 	}
 }
-
-//void FastText::substoke(Model& model, real lr, const std::vector<std::vector<int32_t> >& source, const std::vector<int32_t>& target) {
-//	std::vector<int32_t> bow;
-//	std::uniform_int_distribution<> uniform(1, args_->ws);
-//	for (int32_t w = 0; w < target.size(); w++) {
-//		int32_t boundary = uniform(model.rng);
-//		bow.clear();
-//		for (int32_t c = -boundary; c <= boundary; c++) {
-//			if (c != 0 && w + c >= 0 && w + c < target.size()) {
-//				const std::vector<int32_t>& ngrams = source[w + c];
-//				bow.insert(bow.end(), ngrams.cbegin(), ngrams.cend());
-//			}
-//		}
-//		model.update(bow, target[w], lr);
-//	}
-//}
 
 void FastText::trainThread(int32_t threadId) {
 	std::ifstream ifs(args_->input);
@@ -218,8 +199,6 @@ void FastText::trainThread(int32_t threadId) {
 	while (tokenCount_ < args_->epoch * ntokens) {
 		real process = real(tokenCount_) / (args_->epoch * ntokens);
 		real lr = args_->lr * (1.0 - process);
-		//if (lr < 0.0001 * args_->lr)
-		//	lr = 0.0001 * args_->lr;
 		if (args_->model == model_name::skipgram) {
 			localTokenCount += dict_->getLine(ifs, sourceType, source, target, model.rng);
 			skipgram(model, lr, source, target);
@@ -286,7 +265,8 @@ void FastText::saveVectors() {
 	Vector vec_zero(args_->dim);
 	vec_zero.zero();
 
-	if (nwords > 0) {
+	if ((nwords > 0 && args_->model == model_name::skipgram) 
+		|| (nwords > 0 && args_->model == model_name::cbow)) {
 		std::ofstream ofs(args_->output + ".source");
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(args_->output + ".source" + " cannot be opened for saving source embedding.");
@@ -301,7 +281,8 @@ void FastText::saveVectors() {
 		ofs.close();
 	}
 
-	if (nwords > 0 && nfeatures > 0) {
+	if ((nwords > 0 && nfeatures > 0 && args_->model == model_name::substoke) 
+		|| (nwords > 0 && nfeatures > 0 && args_->model == model_name::subword)) {
 		std::ofstream ofs(args_->output + ".average");
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(
@@ -317,16 +298,15 @@ void FastText::saveVectors() {
 				//vec.addRow(*input_, nwords + ngrams[i]);
 				vec.addRow(*input_, ngrams[i]);
 			}
-			
 			if (ngrams.size() > 0) {
 				vec.mul(1.0 / ngrams.size());
-			}
+			} 
 			ofs << word << " " << vec << std::endl;
 		}
 		ofs.close();
 	}
 
-	if (nfeatures > 0) {
+	if (nfeatures == -1) {
 		std::ofstream ofs(args_->output + ".feature");
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(
@@ -344,7 +324,7 @@ void FastText::saveVectors() {
 		ofs.close();
 	}
 
-	if (ntargets > 0) {
+	if (ntargets == -1) {
 		std::ofstream ofs(args_->output + ".target");
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(args_->output + ".target" + " cannot be opened for saving target embedding.");

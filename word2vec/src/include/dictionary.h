@@ -39,8 +39,10 @@ struct  feature{
 class Dictionary {
   protected:
 	  //static const int32_t MAX_VOCAB_SIZE = 100000000;
+	  //static const int32_t MAX_LINE_SIZE = 1000;
 	  static const int32_t MAX_VOCAB_SIZE = 30000000;
-	static const int32_t MAX_LINE_SIZE = 1024;
+	  static const int32_t MAX_LINE_SIZE = 1024;
+	  
 
 	int32_t findWord(const std::string&) const;
 	void addWord(const std::string&);
@@ -253,36 +255,41 @@ void Dictionary::initFeature() {
 	std::cout << "initail feature, maybe take a while...... " << std::endl;
 	//subword for english
 	if (args_->model == model_name::subword) {
+		std::string word;
 		for (size_t i = 0; i < words_.m_size; i++) {
-			std::string word = BOW + words_.from_id(i) + EOW;
-			if (word != EOS) {
-				vector<string> ngrams;
-				computeSubwords(word, ngrams);
-				for (size_t j = 0; j < ngrams.size(); j++) {
-					addFeature(ngrams[j], words_.m_id_to_freq[i]);
-				}
+			if (words_.from_id(i) == EOS) word = "<s>";
+			else word = BOW + words_.from_id(i) + EOW;
+			vector<string> ngrams;
+			computeSubwords(word, ngrams);
+			for (size_t j = 0; j < ngrams.size(); j++) {
+				addFeature(ngrams[j], words_.m_id_to_freq[i]);
 			}
 		}
 	}
 
 	//substoke for chinese word stoke feature
 	if (args_->model == model_name::substoke) {
-		//std::cerr << "initial word stoke feature" << std::endl;
-		//std::cerr << "substoke model" << std::endl;
 		std::string word;
 		std::string feat;
+		std::string featBE;
 		for (size_t i = 0; i < words_.m_size; i++) {
 			word = words_.from_id(i);
 			feat = getFeat(word);
-			std::string featBE = (BOW + feat + EOW);
-			if (word != EOS) {
-				vector<string> ngrams;
-				computerSubfeat(featBE, ngrams);
-				//computeSubwords(featBE, ngrams);
-				for (size_t j = 0; j < ngrams.size(); j++) {
-					addFeature(ngrams[j], words_.m_id_to_freq[i]);
-				}
+			if (word == EOS) featBE = "<s>";
+			else featBE = BOW + feat + EOW;
+			vector<string> ngrams;
+			computerSubfeat(featBE, ngrams);
+			for (size_t j = 0; j < ngrams.size(); j++) {
+				addFeature(ngrams[j], words_.m_id_to_freq[i]);
 			}
+			//if (word != EOS) {
+			//	vector<string> ngrams;
+			//	computerSubfeat(featBE, ngrams);
+			//	//computeSubwords(featBE, ngrams);
+			//	for (size_t j = 0; j < ngrams.size(); j++) {
+			//		addFeature(ngrams[j], words_.m_id_to_freq[i]);
+			//	}
+			//}
 		}
 	}
 	std::cout << "initail feature finished. " << std::endl;
@@ -318,10 +325,10 @@ std::string Dictionary::getFeat(std::string word) {
 		}
 	}
 	trim(feat);
-	//if (feat == "") {
-	//	//feat = args_->featurepad;
-	//	feat = word;
-	//}
+	if (feat == "") {
+		//feat = args_->featurepad;
+		feat = word;
+	}
 	return feat;
 }
 
@@ -367,6 +374,7 @@ void Dictionary::computerSubfeat(const std::string& word_s, std::vector<int32_t>
 	std::vector<string> word;
 	getCharactersFromUTF8String(word_s, word);
 	std::string ngram = "";
+	std::vector<int32_t>::iterator it;
 	for (size_t i = 0; i < word.size(); i++) {
 		for (size_t j = args_->minn; j <= args_->maxn; j++) {
 			if ((i + j) > word.size())
@@ -379,6 +387,8 @@ void Dictionary::computerSubfeat(const std::string& word_s, std::vector<int32_t>
 			int32_t h = findFeature(ngram);
 			if (h >= 0)
 				//ngrams.push_back(words_.m_size + h);
+				//it = find(ngrams.begin(), ngrams.end(), h);
+				//if (it != ngrams.end()) continue;
 				ngrams.push_back(h);
 		}
 	}
@@ -454,32 +464,48 @@ void Dictionary::initNgrams() {
 
 	std::cout << "initail Ngrams feature, maybe take a while...... " << std::endl;
 
-	if ((args_->model == model_name::skipgram) || (args_->model == model_name::cbow) || (args_->model == model_name::subword)) {
+	if ((args_->model == model_name::skipgram) || (args_->model == model_name::cbow)) {
 		for (size_t i = 0; i < words_.m_size; i++) {
 			wordprops_[i].word = words_.from_id(i);
 			wordprops_[i].count = words_.m_id_to_freq[i];
 
 			std::string word = (BOW + wordprops_[i].word + EOW);
 			wordprops_[i].subwords.clear();
-			//wordprops_[i].subwords.push_back(i);
 			if (wordprops_[i].word != EOS) {
 				computeSubwords(word, wordprops_[i].subwords);
 			}
 		}
 	}
 
+	if (args_->model == model_name::subword) {
+		std::string word;
+		for (size_t i = 0; i < words_.m_size; i++) {
+			wordprops_[i].word = words_.from_id(i);
+			wordprops_[i].count = words_.m_id_to_freq[i];
+			if (wordprops_[i].word == EOS) 
+				word = "<s>";
+			else word = (BOW + wordprops_[i].word + EOW);
+			wordprops_[i].subwords.clear();
+			//wordprops_[i].subwords.push_back(i);
+			computeSubwords(word, wordprops_[i].subwords);
+		}
+	}
+
 	// substoke ngram
 	if (args_->model == model_name::substoke) {
+		std::string featBE;
 		for (size_t i = 0; i < words_.m_size; i++) {
 			wordprops_[i].word = words_.from_id(i);
 			wordprops_[i].count = words_.m_id_to_freq[i];
 			std::string feat = getFeat(wordprops_[i].word);
-			std::string featBE = BOW + feat + EOW;
+			if (wordprops_[i].word == EOS) featBE = "<s>";
+			else featBE = BOW + feat + EOW;
 			wordprops_[i].subwords.clear();
 			//wordprops_[i].subwords.push_back(i);
-			if (wordprops_[i].word != EOS) {
+			computerSubfeat(featBE, wordprops_[i].subwords);
+			/*if (wordprops_[i].word != EOS) {
 				computerSubfeat(featBE, wordprops_[i].subwords);
-			}
+			}*/
 		}
 	}
 	std::cout << "initail Ngrams feature finished. " << std::endl;
@@ -707,7 +733,7 @@ int32_t Dictionary::getLine(std::istream& in, std::vector<std::vector<int32_t> >
 		if ((args_->model == model_name::skipgram) || (args_->model == model_name::cbow))
 			continue;
 
-		sources[valid - 1].pop_back();
+		//sources[valid - 1].pop_back();
 		
 		int ngrams_count = wordprops_[wid].subwords.size();
 		for (int j = 0; j < ngrams_count; j++) {

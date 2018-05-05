@@ -16,6 +16,7 @@
  *  @param  std::string        String class name to be used.
  *  @param  int32_t         ID class name to be used.
  *  @author Naoaki Okazaki
+ *  @author bamtercelboo (modify)
  */
 #include <unordered_map>
 #include <vector>
@@ -24,6 +25,9 @@
 #include <iostream>
 #include <map>
 #include <algorithm>
+
+#include "args.h"
+#include "dictionary.h"
 
 using namespace std;
 
@@ -175,10 +179,11 @@ class basic_quark {
         clear();
 		StringToId_Order tmp_string_to_id_order;
 		std::vector<Cmp> vector_cmp;
-		sort_freq(tmp_string_to_id, vector_cmp);
+		std::vector<Cmp> vector_cmp_eos;
+		sort_freq(tmp_string_to_id, vector_cmp, vector_cmp_eos);
 
-		for (int32_t i = 0; i < vector_cmp.size(); i++) {
-			add_string(vector_cmp[i].word, vector_cmp[i].freq);
+		for (int32_t i = 0; i < vector_cmp_eos.size(); i++) {
+			add_string(vector_cmp_eos[i].word, vector_cmp_eos[i].freq);
 		}
 
         //std::cout << "Remain Size: " << m_size << std::endl;
@@ -187,8 +192,8 @@ class basic_quark {
         m_reduce_threshold++;
     }
 
-	void sort_freq(StringToId &tmp_string_to_id, std::vector<Cmp> &vector_cmp) {
-		
+	void sort_freq(StringToId &tmp_string_to_id, std::vector<Cmp> &vector_cmp, std::vector<Cmp> &vector_cmp_eos) {
+
 		vector_cmp.clear();
 		vector_cmp.resize(tmp_string_to_id.size());
 		int64_t id = 0;
@@ -199,6 +204,34 @@ class basic_quark {
 		}
 
 		std::sort(vector_cmp.begin(), vector_cmp.end(), sort_by_freq);
+
+		// EOS First Location
+		bool flag = false;
+		for (int32_t i = 0; i < vector_cmp.size(); i++) {
+			if (vector_cmp[i].word == "</s>") {
+				flag = true;
+			}
+		}
+		if (flag) {
+			id = 1;
+			vector_cmp_eos.resize(vector_cmp.size());
+			for (int32_t i = 0; i < vector_cmp.size(); i++) {
+				if (vector_cmp[i].word == "</s>") {
+					vector_cmp_eos[0].word = vector_cmp[i].word;
+					vector_cmp_eos[0].freq = vector_cmp[i].freq;
+				} else {
+					vector_cmp_eos[id].word = vector_cmp[i].word;
+					vector_cmp_eos[id].freq = vector_cmp[i].freq;
+					id++;
+				}
+			}
+		} else {
+			vector_cmp_eos.resize(vector_cmp.size());
+			for (int32_t i = 0; i < vector_cmp.size(); i++) {
+				vector_cmp_eos[i].word = vector_cmp[i].word;
+				vector_cmp_eos[i].freq = vector_cmp[i].freq;
+			}
+		}
 	}
 };
 

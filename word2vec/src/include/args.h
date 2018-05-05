@@ -75,7 +75,7 @@ Args::Args() {
 	maxn = 6;
 	thread = 1;
 	lrUpdateRate = 100;
-	t = 1e-4;
+	t = 1e-3;
 	label = "__label__";
 	verbose = 2;
 	pretrainedVectors = "";
