@@ -282,14 +282,6 @@ void Dictionary::initFeature() {
 			for (size_t j = 0; j < ngrams.size(); j++) {
 				addFeature(ngrams[j], words_.m_id_to_freq[i]);
 			}
-			//if (word != EOS) {
-			//	vector<string> ngrams;
-			//	computerSubfeat(featBE, ngrams);
-			//	//computeSubwords(featBE, ngrams);
-			//	for (size_t j = 0; j < ngrams.size(); j++) {
-			//		addFeature(ngrams[j], words_.m_id_to_freq[i]);
-			//	}
-			//}
 		}
 	}
 	std::cout << "initail feature finished. " << std::endl;
@@ -316,11 +308,13 @@ std::string Dictionary::getFeat(std::string word) {
 	std::vector<string> char_vec;
 	getCharactersFromUTF8String(word, char_vec);
 	std::string feat;
+	//substoke + word
+	//feat += word;
 	for (int i = 0; i < char_vec.size(); i++) {
 		std::string char_str = char_vec[i];
+		//feat += char_str;
 		featpos = featuremap.find(char_str);
 		if (featpos != featuremap.end()) {
-			//std::cout << (*featpos).first << "	" << (*featpos).second << std::endl;
 			feat += (*featpos).second;
 		}
 	}
@@ -351,20 +345,6 @@ void Dictionary::computerSubfeat(const std::string& featbe_s, std::vector<std::s
 			substrings.push_back(ngram);
 		}
 	}
-
-	/*for (size_t i = 0; i < featbe.size(); i++) {
-		std::string ngram;
-		if ((featbe[i] & 0xC0) == 0x80) continue;
-		for (size_t j = i, n = 1; j < featbe.size() && n <= args_->maxn; n++) {
-			ngram.push_back(featbe[j++]);
-			while (j < featbe.size() && (featbe[j] & 0xC0) == 0x80) {
-				ngram.push_back(featbe[j++]);
-			}
-			if (n >= args_->minn && !(n == 1 && (i == 0 || j == featbe.size()))) {
-				substrings.push_back(ngram);
-			}
-		}
-	}*/
 }
 
 /**
@@ -387,27 +367,9 @@ void Dictionary::computerSubfeat(const std::string& word_s, std::vector<int32_t>
 			int32_t h = findFeature(ngram);
 			if (h >= 0)
 				//ngrams.push_back(words_.m_size + h);
-				//it = find(ngrams.begin(), ngrams.end(), h);
-				//if (it != ngrams.end()) continue;
 				ngrams.push_back(h);
 		}
 	}
-	
-	/*for (size_t i = 0; i < word.size(); i++) {
-		std::string ngram;
-		if ((word[i] & 0xC0) == 0x80) continue;
-		for (size_t j = i, n = 1; j < word.size() && n <= args_->maxn; n++) {
-			ngram.push_back(word[j++]);
-			while (j < word.size() && (word[j] & 0xC0) == 0x80) {
-				ngram.push_back(word[j++]);
-			}
-			if (n >= args_->minn && !(n == 1 && (i == 0 || j == word.size()))) {
-				int32_t h = findFeature(ngram);
-				if (h >= 0)
-					ngrams.push_back(words_.m_size + h);
-			}
-		}
-	}*/
 }
 
 /**
@@ -486,7 +448,6 @@ void Dictionary::initNgrams() {
 				word = "<s>";
 			else word = (BOW + wordprops_[i].word + EOW);
 			wordprops_[i].subwords.clear();
-			//wordprops_[i].subwords.push_back(i);
 			computeSubwords(word, wordprops_[i].subwords);
 		}
 	}
@@ -501,11 +462,7 @@ void Dictionary::initNgrams() {
 			if (wordprops_[i].word == EOS) featBE = "<s>";
 			else featBE = BOW + feat + EOW;
 			wordprops_[i].subwords.clear();
-			//wordprops_[i].subwords.push_back(i);
 			computerSubfeat(featBE, wordprops_[i].subwords);
-			/*if (wordprops_[i].word != EOS) {
-				computerSubfeat(featBE, wordprops_[i].subwords);
-			}*/
 		}
 	}
 	std::cout << "initail Ngrams feature finished. " << std::endl;
@@ -517,7 +474,6 @@ void Dictionary::initNgrams() {
 void Dictionary::initTableDiscard() {
 	pdiscard_.resize(words_.m_size);
 	for (size_t i = 0; i < words_.m_size; i++) {
-		//real f = real(wordprops_[i].count) / real(ntokens_);
 		real f = real(words_.m_id_to_freq[i]) / real(ntokens_);
 		pdiscard_[i] = std::sqrt(args_->t / f) + args_->t / f;
 	}
@@ -541,7 +497,6 @@ bool Dictionary::readWord(std::istream& in, std::string& word) const {
 	std::streambuf& sb = *in.rdbuf();
 	word.clear();
 	while ((c = sb.sbumpc()) != EOF) {
-		//std::cout <<"char " << c << std::endl;
 		if (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '\f' || c == '\0') {
 			if (word.empty()) {
 				if (c == '\n') {
@@ -718,7 +673,6 @@ int32_t Dictionary::getLine(std::istream& in, std::vector<std::vector<int32_t> >
 		int32_t wid = findWord(words[i]);
 		int32_t tid = findTarget(words[i]);
 		ntokens++;
-		//int a = discard(wid, uniform(rng));
 		if (wid < 0 || tid < 0 || discard(wid, uniform(rng)))
 			continue;
 		valid++;
@@ -740,9 +694,6 @@ int32_t Dictionary::getLine(std::istream& in, std::vector<std::vector<int32_t> >
 			sourceTypes[valid - 1].push_back(0);
 			sources[valid - 1].push_back(wordprops_[wid].subwords[j]);
 		}
-		/*if (ntokens > MAX_LINE_SIZE)
-			std::cout << "aaa" << std::endl;
-			break;*/
 	}
 	return ntokens;
 }

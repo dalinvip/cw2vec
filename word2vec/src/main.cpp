@@ -21,7 +21,7 @@ void printUsage() {
 		<< "  skipgram  ------ train word embedding by use skipgram model\n"
 		<< "  cbow  ------ train word embedding by use cbow model\n"
 		<< "  subword   ------ train word embedding by use subword  model\n"
-		<< "  substoke   ------ train chinses character embedding by use substoke model\n"
+		<< "  substoke   ------ train chinses character embedding by use substoke(cw2vec) model\n"
 		<< std::endl;
 }
  

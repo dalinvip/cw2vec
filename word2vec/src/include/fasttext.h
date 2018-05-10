@@ -267,9 +267,9 @@ void FastText::saveVectors() {
 
 	if ((nwords > 0 && args_->model == model_name::skipgram) 
 		|| (nwords > 0 && args_->model == model_name::cbow)) {
-		std::ofstream ofs(args_->output + ".source");
+		std::ofstream ofs(args_->output + ".vec");
 		if (!ofs.is_open()) {
-			throw std::invalid_argument(args_->output + ".source" + " cannot be opened for saving source embedding.");
+			throw std::invalid_argument(args_->output + ".vec" + " cannot be opened for saving source embedding.");
 		}
 		ofs << nwords << " " << args_->dim << std::endl;
 		for (int32_t i = 0; i < nwords; i++){
@@ -283,10 +283,15 @@ void FastText::saveVectors() {
 
 	if ((nwords > 0 && nfeatures > 0 && args_->model == model_name::substoke) 
 		|| (nwords > 0 && nfeatures > 0 && args_->model == model_name::subword)) {
-		std::ofstream ofs(args_->output + ".average");
+		std::ofstream ofs(args_->output + ".vec");
+		if (args_->model == model_name::subword) {
+			std::ofstream ofs(args_->output + ".vec");
+		} else {
+			std::ofstream ofs(args_->output + ".avg");
+		}
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(
-				args_->output + ".average" + " cannot be opened for saving average feature embedding.");
+				args_->output + ".avg(vec)" + " cannot be opened for saving average feature embedding.");
 		}
 		ofs << nwords << " " << args_->dim << std::endl;
 		for (int32_t i = 0; i < nwords; i++) {
@@ -324,10 +329,10 @@ void FastText::saveVectors() {
 		ofs.close();
 	}
 
-	if (ntargets == -1) {
-		std::ofstream ofs(args_->output + ".target");
+	if (ntargets > 0 && args_->model == model_name::substoke) {
+		std::ofstream ofs(args_->output + ".vec");
 		if (!ofs.is_open()) {
-			throw std::invalid_argument(args_->output + ".target" + " cannot be opened for saving target embedding.");
+			throw std::invalid_argument(args_->output + ".vec" + " cannot be opened for saving target embedding.");
 		}
 		ofs << ntargets << " " << args_->dim << std::endl;
 		for (int32_t i = 0; i < ntargets; i++) {
