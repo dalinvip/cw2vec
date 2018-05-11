@@ -51,6 +51,8 @@ substoke model need chinese stoke feature(`-infeature`)，I have written a scrip
 	潮 丶丶一一丨丨フ一一一丨ノフ一一
 	......
 
+I provided a feature file for the test，path is `sample/substoke_feature.txt`.
+
 
 ## Word similarity evaluation ##
 
