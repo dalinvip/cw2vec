@@ -70,7 +70,7 @@ Invoke a command without arguments to list available arguments and their default
 
 	./word2vec substoke -h
 	Train Embedding By Using [substoke] model
-	Here is the help infprmation! Usage:
+	Here is the help information! Usage:
 
 	The Following arguments are mandatory:
 		-input              training file path
