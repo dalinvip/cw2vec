@@ -74,8 +74,8 @@ The parameters are set as follows:
 Experimental results show follows  
 
 ![](https://i.imgur.com/u0O6RoE.jpg)
-
-![](https://i.imgur.com/MxJnaQh.jpg)
+  
+![](https://i.imgur.com/p4gjsaD.jpg)
 
 
 ## Full documentation ##
