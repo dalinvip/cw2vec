@@ -32,6 +32,26 @@ the repo not only implement cw2vec(named **substoke**), but also the **skipgram*
 
 	substoke: ./word2vec substoke -input train.txt -infeature feature.txt -output substoke_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -thread 8 -t 1e-4 -lrUpdateRate 100
 
+## Get chinese stoke feature ##
+substoke model need chinese stoke feature(`-infeature`)，I have written a script to acquire the Chinese character of stroke information from [handian](http://www.zdic.net/). here is the script [extract_zh_char_stoke](https://github.com/bamtercelboo/corpus_process_script/tree/master/extract_zh_char_stoke),  see the readme for details.
+
+**feature file(feature.txt) like this**:
+
+	中 丨フ一丨
+	国 丨フ一一丨一丶一
+	庆 丶一ノ一ノ丶
+	假 ノ丨フ一丨一一フ一フ丶
+	期 一丨丨一一一ノ丶ノフ一一
+	香 ノ一丨ノ丶丨フ一一
+	江 丶丶一一丨一
+	将 丶一丨ノフ丶一丨丶
+	涌 丶丶一フ丶丨フ一一丨
+	入 ノ丶
+	人 ノ丶
+	潮 丶丶一一丨丨フ一一一丨ノフ一一
+	......
+
+
 ## Word similarity evaluation ##
 
 #### 1. Evaluation script ####
