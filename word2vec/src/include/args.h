@@ -196,8 +196,7 @@ void Args::printBasicHelp() {
 	std::cerr
 		<< "\n The Following arguments are mandatory:\n"
 		<< "  -input						     training file path\n"
-		<< "  -inradical		chinese character radical file path\n"
-		<< "  -infeature		chinese character component file path\n"
+		<< "  -infeature				 substoke feature file path\n"
 		<< "  -output							   output file path\n"
 		<< "\n The Following arguments are optional:\n"
 		<< "  -verbose   verbosity level[" << verbose << "]\n"
@@ -211,12 +210,10 @@ void Args::printDictionaryHelp() {
 	std::cerr
 		<< "\nThe following arguments for the dictionary are optional:\n"
 		<< "  -minCount           minimal number of word occurences default:[" << minCount << "]\n"
-		<< "  -minCountLabel      minimal number of label occurences default:[" << minCountLabel << "]\n"
 		<< "  -bucket             number of buckets default:[" << bucket << "]\n"
 		<< "  -minn               min length of char ngram default:[" << minn << "]\n"
 		<< "  -maxn               max length of char ngram default:[" << maxn << "]\n"
-		<< "  -t                  sampling threshold default:[" << t << "]\n"
-		<< "  -label              labels prefix default:[" << label << "]\n";
+		<< "  -t                  sampling threshold default:[" << t << "]\n";
 }
 
 /**
