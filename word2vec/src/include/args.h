@@ -104,7 +104,7 @@ void Args::parseArgs(const std::vector<std::string>& args) {
 		}
 		try {
 			if (args[ai] == "-h" || args[ai] == "--help") {
-				std::cerr << "Here is the help infprmation! Usage:" << std::endl;
+				std::cerr << "Here is the help information! Usage:" << std::endl;
 				printHelp();
 				//std::getchar();
 				exit(EXIT_FAILURE);
