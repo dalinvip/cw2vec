@@ -54,6 +54,15 @@ substoke model need chinese stoke feature(`-infeature`)，I have written a scrip
 I provided a feature file for the test，path is `sample/substoke_feature.txt`.
 
 
+## Substoke model output embeddings ##
+
+- In this paper, the context word embeddings is used directly as the final word vector. However, according to the idea of fasttext, I also take into account the n-gram feature vector of the stroke information, the n-gram feature vector of the stroke information is taken as an average substitute for the word vector. 
+
+-  There are two outputs in substoke model:
+	-  output ends with vec is the context word vector.
+	-  output ends with avg is the n-gram feature vector average.
+
+
 ## Word similarity evaluation ##
 
 #### 1. Evaluation script ####
