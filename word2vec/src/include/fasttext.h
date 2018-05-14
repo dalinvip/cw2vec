@@ -283,12 +283,13 @@ void FastText::saveVectors() {
 
 	if ((nwords > 0 && nfeatures > 0 && args_->model == model_name::substoke) 
 		|| (nwords > 0 && nfeatures > 0 && args_->model == model_name::subword)) {
-		std::ofstream ofs(args_->output + ".vec");
+		std::string outfile;
 		if (args_->model == model_name::subword) {
-			std::ofstream ofs(args_->output + ".vec");
+			outfile = args_->output + ".vec";
 		} else {
-			std::ofstream ofs(args_->output + ".avg");
+			outfile = args_->output + ".avg";
 		}
+		std::ofstream ofs(outfile);
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(
 				args_->output + ".avg(vec)" + " cannot be opened for saving average feature embedding.");
