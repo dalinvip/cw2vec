@@ -14,7 +14,7 @@ Paper Detail Summary: [cw2vec理论及其实现](https://bamtercelboo.github.io/
 ## Building cw2vec using cmake ##
 
 	git clone git@github.com:bamtercelboo/cw2vec.git
-	cd cw2vec && cd build
+	cd cw2vec && cd word2vec && cd build
 	cmake ..
 	make
 	cd ../bin
