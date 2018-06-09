@@ -15,7 +15,7 @@ Paper Detail Summary: [cw2vec理论及其实现](https://bamtercelboo.github.io/
 
 - I have uploaded  `word2vec` binary executable file in `cw2vec/word2vec/bin` and rewrite `run.sh` for simple test, you can run `run.sh` directly for simple test.
 
-- According to the *Building cw2vec using cmake*  to recompile and run other model with the *Example use cases*.
+- According to the *[Building cw2vec using cmake](https://github.com/bamtercelboo/cw2vec#building-cw2vec-using-cmake)*  to recompile and run other model with the *[Example use cases](https://github.com/bamtercelboo/cw2vec#example-use-cases)*.
 
 
 ## Building cw2vec using cmake ##
