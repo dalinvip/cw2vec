@@ -29,7 +29,9 @@ Paper Detail Summary: [cw2vec理论及其实现](https://bamtercelboo.github.io/
 This will create the word2vec binary and also all relevant libraries.
 
 ## Example use cases ##
-the repo not only implement cw2vec(named **substoke**), but also the **skipgram**, **cbow** of word2vec, furthermore, fasttext skipgram is implemented(named **subword**).
+the repo not only implement cw2vec(named **substoke**), but also the **skipgram**, **cbow** of word2vec, furthermore, fasttext skipgram is implemented(named **subword**).  
+
+	Please modify train.txt and feature.txt into your own train document.
 
 	skipgram: ./word2vec skipgram -input train.txt -output skipgram_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -thread 8 -t 1e-4 -lrUpdateRate 100  
 
@@ -38,6 +40,7 @@ the repo not only implement cw2vec(named **substoke**), but also the **skipgram*
 	subword:  ./word2vec subword -input train.txt -output subword_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -thread 8 -t 1e-4 -lrUpdateRate 100
 
 	substoke: ./word2vec substoke -input train.txt -infeature feature.txt -output substoke_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -thread 8 -t 1e-4 -lrUpdateRate 100
+
 
 ## Get chinese stoke feature ##
 substoke model need chinese stoke feature(`-infeature`)，I have written a script to acquire the Chinese character of stroke information from [handian](http://www.zdic.net/). here is the script [extract_zh_char_stoke](https://github.com/bamtercelboo/corpus_process_script/tree/master/extract_zh_char_stoke),  see the readme for details.
