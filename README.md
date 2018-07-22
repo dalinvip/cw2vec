@@ -37,9 +37,11 @@ the repo not only implement cw2vec(named **substoke**), but also the **skipgram*
 
 	cbow:     ./word2vec cbow -input train.txt -output cbow_out -lr 0.05 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -thread 8 -t 1e-4 -lrUpdateRate 100
 
-	subword:  ./word2vec subword -input train.txt -output subword_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -thread 8 -t 1e-4 -lrUpdateRate 100
+	subword:  ./word2vec subword -input train.txt -output subword_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -minn 3 -maxn 6 -thread 8 -t 1e-4 -lrUpdateRate 100
 
-	substoke: ./word2vec substoke -input train.txt -infeature feature.txt -output substoke_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -thread 8 -t 1e-4 -lrUpdateRate 100
+	substoke: ./word2vec substoke -input train.txt -infeature feature.txt -output substoke_out -lr 0.025 -dim 100 -ws 5 -epoch 5 -minCount 10 -neg 5 -loss ns -minn 3 -maxn 18 -thread 8 -t 1e-4 -lrUpdateRate 100
+
+
 
 
 ## Get chinese stoke feature ##
