@@ -45,7 +45,11 @@ the repo not only implement cw2vec(named **substoke**), but also the **skipgram*
 
 
 ## Get chinese stoke feature ##
-substoke model need chinese stoke feature(`-infeature`)，I have written a script to acquire the Chinese character of stroke information from [handian](http://www.zdic.net/). here is the script [extract_zh_char_stoke](https://github.com/bamtercelboo/corpus_process_script/tree/master/extract_zh_char_stoke),  see the readme for details.
+substoke model need chinese stoke feature(`-infeature`)，I have written a script to acquire the Chinese character of stroke information from [handian](http://www.zdic.net/). here is the script [extract_zh_char_stoke](https://github.com/bamtercelboo/corpus_process_script/tree/master/extract_zh_char_stoke),  see the readme for details.  
+
+Now, I have uploaded a file of stroke features in simplified Chinese, which contains a total of 20901 Chinese characters for use. The file in the [Simplified_Chinese_Feature](https://github.com/bamtercelboo/cw2vec/blob/master/Simplified_Chinese_Feature/sin_chinese_feature.txt) folder.  Or you can use the above script to get it yourself.
+
+
 
 **feature file(feature.txt) like this**:
 
