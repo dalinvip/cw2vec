@@ -152,14 +152,6 @@ Invoke a command without arguments to list available arguments and their default
 [3] [fastText-github](https://github.com/facebookresearch/fastText)  
 [4] [cw2vec理论及其实现](https://bamtercelboo.github.io/2018/05/11/cw2vec/)
 
-## Question ##
-
-- if you have any question, you can open a issue or email bamtercelboo@{gmail.com, 163.com}.
-
-- if you have any good suggestions, you can PR or email me.
-
-
-
 
 
 
